@@ -1,0 +1,28 @@
+{
+  "name": "minecraft-discord-bot",
+  "version": "0.1.0",
+  "description": "A discord bot that provides helpful functions for Realm admins and players",
+  "main": "app.js",
+  "scripts": {
+    "tsc": "tsc"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/josh-greenlaw/minecraft-discord-bot.git"
+  },
+  "keywords": [
+    "minecraft",
+    "discord",
+    "bot"
+  ],
+  "author": "Joshua Greenlaw",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/josh-greenlaw/minecraft-discord-bot/issues"
+  },
+  "homepage": "https://github.com/josh-greenlaw/minecraft-discord-bot#readme",
+  "dependencies": {
+    "discord.js": "github:discordjs/discord.js",
+    "typescript": "^3.6.3"
+  }
+}
