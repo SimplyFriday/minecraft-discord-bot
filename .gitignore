@@ -62,3 +62,6 @@ typings/
 
 # Transpiled app location
 build/
+
+# Config file with real secrets
+/app/config.json

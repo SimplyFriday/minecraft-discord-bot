@@ -2,7 +2,7 @@
   "name": "minecraft-discord-bot",
   "version": "0.1.0",
   "description": "A discord bot that provides helpful functions for Realm admins and players",
-  "main": "app.js",
+  "main": "MinecraftBot.js",
   "scripts": {
     "tsc": "tsc"
   },
@@ -22,7 +22,17 @@
   },
   "homepage": "https://github.com/josh-greenlaw/minecraft-discord-bot#readme",
   "dependencies": {
+    "@typeit/discord": "^1.0.3",
+    "clime": "^0.5.10",
     "discord.js": "github:discordjs/discord.js",
+    "mssql": "^5.1.0",
+    "reflect-metadata": "^0.1.13",
+    "through2": "^3.0.1",
+    "tslib": "^1.10.0",
     "typescript": "^3.6.3"
+  },
+  "devDependencies": {
+    "@types/mssql": "^4.3.1",
+    "@types/node": "^12.7.11"
   }
 }
