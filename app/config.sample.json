@@ -1,3 +1,10 @@
 {
-    "DiscordToken": "TOKEN_GOES_HERE"
+    "DiscordToken": "TOKEN_GOES_HERE",
+    "DatabaseSettings":{
+        "Server":"ServerName",
+        "Database":"DatabaseName",
+        "Port":"1433",
+        "UserName":"UserName",
+        "Password":"NotPassword1!"
+    }
 }

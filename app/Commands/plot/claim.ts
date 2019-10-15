@@ -7,7 +7,7 @@ export const description =
 
 @command()
 export default class extends Command {
-  execute(
+  async execute(
     @param({
       type: String,
       description: 'X coord',

@@ -15,7 +15,7 @@ export class SampleOptions extends Options {
 
 @command()
 export default class extends Command {
-  execute(
+  async execute(
     @param({
       required: true,
       description: 'required parameter foo',

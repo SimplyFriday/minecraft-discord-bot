@@ -1,11 +1,11 @@
 import { Discord, On, Client } from "@typeit/discord";
-import AppConfig from './config.json'
 import * as Path from 'path';
 import { CLI, Shim } from 'clime';
 import { Message, MessageEmbed } from 'discord.js';
 import { DiscordShim } from './Services/discord-shim.js';
+import { ConfigHelper } from './Services/config-helper.js';
 
-const ValidCommands = ["plot"];
+const ValidCommands = ['plot', 'settings'];
 const __Prefix: string = '%';
 
 @Discord
@@ -15,8 +15,10 @@ export abstract class MinecraftBot {
     static start() {
         console.log("Starting Minecraft Helper bot with prefix '" + __Prefix + "'...");
         this._client = new Client();
-        this._client.login( (<any> AppConfig).DiscordToken );
+        var ch = new ConfigHelper();
 
+        this._client.login( ch.DiscordToken );
+        
         this.populateServices();
     }
     
@@ -25,7 +27,7 @@ export abstract class MinecraftBot {
 
 
     @On("message")
-    private onMessage(message: Message) {
+    private async onMessage(message: Message) {
         console.log(message.content);
         
         if (MinecraftBot._client.user &&
@@ -54,15 +56,13 @@ export abstract class MinecraftBot {
                         let cli = new CLI(baseCmd, cmdDir);
 
                         let shim = new DiscordShim(cli, MinecraftBot._client,message);
-                        let embed = shim.execute(cmd.split(" "));
+                        let embed = await shim.execute(cmd);
 
-                        embed.then(val => {
-                            if (val.text) {
-                                message.channel.send(val.text);
-                            } else {
-                                message.channel.send(val);
-                            }
-                        }); 
+                        if (embed.text) {
+                            message.channel.send(embed.text);
+                        } else {
+                            message.channel.send(embed);
+                        }
                     } catch (error) {
                         console.error(error);
                     }

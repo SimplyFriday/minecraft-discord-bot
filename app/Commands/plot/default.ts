@@ -3,11 +3,11 @@ import { MessageEmbed } from 'discord.js';
 
 export const brief = 'Plot tools';
 export const description =
-  'This is a set of commands relating to the management and lookup of plots. Calling without any arguments is the same as calling "plot list {currentUser}"';
+  'This is a set of commands relating to the management and lookup of plots. Calling without any arguments will return your current plots';
 
 @command()
 export default class extends Command { 
-  execute(
+  async execute(
     @param({
       type: String,
       description: 'The user to look up',
@@ -17,7 +17,7 @@ export default class extends Command {
   ) {
     var embed = new MessageEmbed()
     embed.title = "Plot";
-    embed.fields.push({name:"Player",value:"Sample data"});
+    embed.fields.push({name:"Player",value:"user: " + user});
     
     return embed;
   }
