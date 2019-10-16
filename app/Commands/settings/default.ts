@@ -2,6 +2,7 @@ import {Command, command, param, params, metadata, option, Options} from 'clime'
 import { MessageEmbed, TextChannel } from 'discord.js';
 import { MSSqlRepository } from '../../Services/mssql-repository';
 import { DiscordCommandContext } from '../../Services/discord-command-context';
+import { RealmSettings } from '../../Models/realm-settings';
 
 export const brief = 'Manage settings';
 export const description =
@@ -41,8 +42,14 @@ export default class extends Command {
     console.log(context);
 
     if (context.message && context.message.guild) {
-      var settings = await repo.getRealmSettings(context.message.guild.id, realmName, options.playerId);
-
+      var settings:RealmSettings 
+      
+      if (!realmName && !options.playerId) {
+        settings = context.realmSettings;
+      } else {
+        settings = await repo.getRealmSettings(context.message.guild.id, realmName, options.playerId);
+      }
+      
       if (key) {
         embed.fields.push({ name: key, value: settings[key] });
       } else {

@@ -1,7 +1,9 @@
-import {CLI, ContextOptions} from 'clime';
+import {CLI, ContextOptions, ExpectedError} from 'clime';
 import { Client } from '@typeit/discord';
 import { Message, MessageEmbed } from 'discord.js';
 import { DiscordCommandContext } from './discord-command-context';
+import { MSSqlRepository } from './mssql-repository';
+import { RealmSettings } from '../Models/realm-settings';
 
 export class DiscordShim {
     constructor(public cli: CLI, public client: Client, public message: Message) {}
@@ -26,7 +28,17 @@ export class DiscordShim {
                 cwd: ""
             };
 
-            var context = new DiscordCommandContext(options, {message:this.message, client:this.client} )
+            var repo = new MSSqlRepository();
+            var settings: RealmSettings;
+
+            if (this.message.guild)
+            {
+                settings = await repo.getRealmSettings (this.message.guild.id);
+            } else {
+                throw new Error("Huh, guild.id was missing. This shouldn't be possible, yet here we are.");
+            }
+
+            var context = new DiscordCommandContext(options, {message:this.message, client:this.client, realmSettings: settings} )
 
             return await this.cli.execute(argArr, context);
         } catch (error) {

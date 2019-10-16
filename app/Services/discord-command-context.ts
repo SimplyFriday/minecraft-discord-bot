@@ -1,14 +1,25 @@
 import { Context, ContextOptions } from 'clime';
 import { Message } from 'discord.js';
 import { Client } from '@typeit/discord';
+import { RealmSettings } from '../Models/realm-settings';
+import { MSSqlRepository } from './mssql-repository';
 
 export class DiscordCommandContext extends Context {
-    public message?:Message;
-    public client?:Client;
+    public message:Message;
+    public client:Client;
+    public realmSettings: RealmSettings;
 
-    constructor (options:ContextOptions, contextExtension:Object) {
+    constructor (options:ContextOptions, contextExtension:DiscordCommandContextValues) {
         super(options);
 
-        Object.assign(this, contextExtension);
+        this.message = contextExtension.message;
+        this.client = contextExtension.client;
+        this.realmSettings = contextExtension.realmSettings
     }
+}
+
+export interface DiscordCommandContextValues {
+    message:Message;
+    client:Client;
+    realmSettings: RealmSettings;
 }

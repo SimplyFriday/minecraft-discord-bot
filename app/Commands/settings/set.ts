@@ -38,9 +38,18 @@ export default class extends Command {
     
     var repo = new MSSqlRepository();
     
-    if (context.message && context.message.guild) { 
-        await repo.setRealmSettings(context.message.guild.id, key, value, realmName, options.playerId);
-        embed.description = "Success!"
+    if (context.message.guild) { 
+      if (!realmName && key != 'defaultRealmName') {
+        // defaultRealmName needs to have a realmName of '', but
+        // anything else would get the default realm when not specified.
+        // The repo fetches from the database if necessary, but since
+        // we have already fetched it once (and that setting is server 
+        // wide), we should re-use it here to prevent more db calls.
+        realmName = context.realmSettings.defaultRealmName;
+      }
+
+      await repo.setRealmSettings(context.message.guild.id, key, value, realmName, options.playerId);
+      embed.description = "Success!"
     }
 
     return embed;
