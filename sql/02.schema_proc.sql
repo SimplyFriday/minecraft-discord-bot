@@ -61,10 +61,10 @@ GO
 
 CREATE OR ALTER PROCEDURE dbo.InsertSquarePlot
 (
-	@DiscordServerId BIGINT,
+	@DiscordServerId VARCHAR(40),
 	@RealmName NVARCHAR(100),
 	@Notes NVARCHAR(500) = NULL,
-	@OwnerId BIGINT,
+	@OwnerId VARCHAR(40),
 
 	@CenterX BIGINT,
 	@CenterY BIGINT,
@@ -101,10 +101,10 @@ GO
 
 CREATE OR ALTER PROCEDURE dbo.InsertFreeFormPlot
 (
-	@DiscordServerId BIGINT,
+	@DiscordServerId VARCHAR(40),
 	@RealmName NVARCHAR(100),
 	@Notes NVARCHAR(500) = NULL,
-	@OwnerId BIGINT,
+	@OwnerId VARCHAR(40),
 
 	@points VARCHAR(900)
 
@@ -140,10 +140,10 @@ GO
 
 CREATE OR ALTER PROCEDURE dbo.InsertCirclePlot
 (
-	@DiscordServerId BIGINT,
+	@DiscordServerId VARCHAR(40),
 	@RealmName NVARCHAR(100),
 	@Notes NVARCHAR(500) = NULL,
-	@OwnerId BIGINT,
+	@OwnerId VARCHAR(40),
 
 	@CenterX BIGINT,
 	@CenterY BIGINT,
@@ -181,7 +181,7 @@ GO
 CREATE OR ALTER PROCEDURE dbo.CheckForPlotIntersect
 (
 	@GeoToCheck GEOMETRY,
-	@DiscordServerId BIGINT,
+	@DiscordServerId VARCHAR(40),
 	@RealmName NVARCHAR(100)
 )
 AS
@@ -203,15 +203,15 @@ GO
 
 CREATE OR ALTER PROCEDURE dbo.GetUserPlot
 (
-	@UserId BIGINT,
-	@DiscordServerId BIGINT,
+	@UserId VARCHAR(40),
+	@DiscordServerId VARCHAR(40),
 	@RealmName NVARCHAR(100)
 )
 AS
 BEGIN
 	SELECT CenterX,
-            CenterY,
-            Notes	
+           CenterY,
+           Notes	
 	FROM dbo.Plot
 	WHERE RealmName = @RealmName
 		AND DiscordServerId = @DiscordServerId
@@ -221,19 +221,86 @@ GO
 
 CREATE OR ALTER PROCEDURE dbo.GetRealmSettings
 (
-	@DiscordServerId BIGINT,
-	@RealmName NVARCHAR(100) = NULL
+	@DiscordServerId VARCHAR(40)
 )
 AS
 BEGIN
 	SELECT [Key],
-            Value
+            Value,
+			RealmName,
+			PlayerId
 	FROM dbo.RealmSetting
 	WHERE @DiscordServerId = DiscordServerId
-		AND 
+END
+GO
+
+CREATE OR ALTER PROCEDURE dbo.SetRealmSetting
+(
+	@DiscordServerId VARCHAR(40),
+	@RealmName NVARCHAR(100),
+	@Key VARCHAR(50),
+	@Value NVARCHAR(500),
+	@PlayerId VARCHAR(40) = NULL
+)
+AS
+BEGIN
+	IF @PlayerId IS NOT NULL
+		MERGE INTO dbo.RealmSetting WITH (HOLDLOCK) AS dst
+		USING
 		(
-			@RealmName IS NULL
-			OR RealmName = @RealmName
-		)
+			SELECT @Key AS [Key]
+		) AS src
+			ON dst.[Key] = src.[Key]
+			AND dst.DiscordServerId = @DiscordServerId
+			AND dst.RealmName = @RealmName
+			AND  dst.PlayerId = @PlayerId
+		WHEN MATCHED THEN 
+			UPDATE SET dst.Value = @Value
+		WHEN NOT MATCHED THEN
+			INSERT
+			(
+				[Key],
+				Value,
+				DiscordServerId,
+				RealmName,
+				PlayerId
+			)
+			VALUES
+			(
+				@Key,
+				@Value,
+				@DiscordServerId,
+				@RealmName,
+				@PlayerId
+			);
+	ELSE
+		MERGE INTO dbo.RealmSetting WITH (HOLDLOCK) AS dst
+		USING
+		(
+			SELECT @Key AS [Key]
+		) AS src
+			ON dst.[Key] = src.[Key]
+			AND dst.DiscordServerId = @DiscordServerId
+			AND dst.RealmName = @RealmName
+			AND dst.PlayerId IS NULL
+		WHEN MATCHED THEN 
+			UPDATE SET dst.Value = @Value
+		WHEN NOT MATCHED THEN
+			INSERT
+			(
+				[Key],
+				Value,
+				DiscordServerId,
+				RealmName,
+				PlayerId
+			)
+			VALUES
+			(
+				@Key,
+				@Value,
+				@DiscordServerId,
+				@RealmName,
+				@PlayerId
+			);
 END
 GO

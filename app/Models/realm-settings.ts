@@ -3,6 +3,7 @@ export class RealmSettings {
     realmModeratorRoleName:string = "Moderator";
     realmAdminRoleName:string = "Admin";
     realmIsConfigured:boolean = false;
+    defaultPlotShape:string = "square";
     
     // These entries should only ever exist once per discord server,
     // more than that will break other logic (enforced in repo);
