@@ -55,20 +55,20 @@ export class MSSqlRepository
             }
 
             serverResults.forEach(item => {
-                if (settings[item.Key]){
+                if (settings.hasOwnProperty(item.Key)){
                     settings[item.Key] = item.Value;
                 }
             });
 
             realmResults.forEach(item => {
-                if (settings[item.Key]){
+                if (settings.hasOwnProperty(item.Key)){
                     settings[item.Key] = item.Value;
                 }
             });
 
             if (playerId) {
                 playerResults.forEach(item => {
-                    if (settings[item.Key]){
+                    if (settings.hasOwnProperty(item.Key)){
                         settings[item.Key] = item.Value;
                     }
                 });
@@ -81,12 +81,12 @@ export class MSSqlRepository
     public async setRealmSettings(discordServerId:string, key:string, value:string, realmName?:string, playerId?:string) {
         var dummySettings:RealmSettings = new RealmSettings
         
-        if (!dummySettings[key]) {
+        if (!dummySettings.hasOwnProperty(key)) {
             throw new ExpectedError ('"' + key + '" is not a valid key. All keys are case sensitive!');
         }
         
         if (!realmName) {
-            if (key === 'defaultRealmName') {
+            if (RealmSettings.keyIsServerLevel(key)) {
                 realmName = '';
             } else {
                 var settings = await this.getRealmSettings(discordServerId);

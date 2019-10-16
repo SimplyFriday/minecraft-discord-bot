@@ -4,6 +4,7 @@ import { CLI, Shim } from 'clime';
 import { Message, MessageEmbed } from 'discord.js';
 import { DiscordShim } from './Services/discord-shim.js';
 import { ConfigHelper } from './Services/config-helper.js';
+import { DiscordCli } from './Services/discord-cli.js';
 
 const ValidCommands = ['help', 'plot', 'settings'];
 const __Prefix: string = '%';
@@ -63,7 +64,7 @@ export abstract class MinecraftBot {
                     try {
                         
                         var cmdDir = Path.join(__dirname, 'commands', baseCmd);
-                        let cli = new CLI(baseCmd, cmdDir);
+                        let cli = new DiscordCli(baseCmd, cmdDir);
 
                         let shim = new DiscordShim(cli, MinecraftBot._client,message);
                         let result = await shim.execute(cmd);

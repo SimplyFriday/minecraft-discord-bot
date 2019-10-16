@@ -4,10 +4,14 @@ import { MSSqlRepository } from '../../Services/mssql-repository';
 import { Cipher } from 'crypto';
 import { DiscordCommandContext } from '../../Services/discord-command-context';
 import { SettingsOptions } from './default';
+import { SecurityLevel } from '../../Services/discord-cli';
+import { RealmSettings } from '../../Models/realm-settings';
 
 export const brief = 'Update setting';
 export const description =
   'Use this subcommand to update a setting';
+
+export const minimumSecurityLevel = SecurityLevel.Admin;
 
 @command()
 export default class extends Command { 
@@ -39,8 +43,8 @@ export default class extends Command {
     var repo = new MSSqlRepository();
     
     if (context.message.guild) { 
-      if (!realmName && key != 'defaultRealmName') {
-        // defaultRealmName needs to have a realmName of '', but
+      if (!realmName && !RealmSettings.keyIsServerLevel(key)) {
+        // Some settings needs to have a realmName of '', but
         // anything else would get the default realm when not specified.
         // The repo fetches from the database if necessary, but since
         // we have already fetched it once (and that setting is server 

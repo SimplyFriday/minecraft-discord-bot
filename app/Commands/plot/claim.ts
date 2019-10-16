@@ -1,9 +1,12 @@
 import {Command, command, param, params} from 'clime';
 import { MessageEmbed } from 'discord.js';
+import { SecurityLevel } from '../../Services/discord-cli';
 
 export const brief = 'List Plots';
 export const description =
   'List all plots for the specified user.';
+
+export const minimumSecurityLevel = SecurityLevel.Everyone;
 
 @command()
 export default class extends Command {

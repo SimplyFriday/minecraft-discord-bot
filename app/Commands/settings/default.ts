@@ -3,10 +3,13 @@ import { MessageEmbed, TextChannel } from 'discord.js';
 import { MSSqlRepository } from '../../Services/mssql-repository';
 import { DiscordCommandContext } from '../../Services/discord-command-context';
 import { RealmSettings } from '../../Models/realm-settings';
+import { SecurityLevel } from '../../Services/discord-cli';
 
 export const brief = 'Manage settings';
 export const description =
   'This is a set of commands relating to the management of realm settings';
+
+export const minimumSecurityLevel = SecurityLevel.Moderator;
 
 export class SettingsOptions extends Options {
   @option({

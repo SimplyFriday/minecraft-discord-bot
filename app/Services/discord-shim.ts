@@ -4,9 +4,10 @@ import { Message, MessageEmbed } from 'discord.js';
 import { DiscordCommandContext } from './discord-command-context';
 import { MSSqlRepository } from './mssql-repository';
 import { RealmSettings } from '../Models/realm-settings';
+import { DiscordCli } from './discord-cli';
 
 export class DiscordShim {
-    constructor(public cli: CLI, public client: Client, public message: Message) {}
+    constructor(public cli: DiscordCli, public client: Client, public message: Message) {}
 
     async execute(args:string): Promise<any> {
         try {
@@ -40,7 +41,7 @@ export class DiscordShim {
 
             var context = new DiscordCommandContext(options, {message:this.message, client:this.client, realmSettings: settings} )
 
-            return await this.cli.execute(argArr, context);
+            return await this.cli.executeWithSecurity(argArr, context);
         } catch (error) {
             console.error(error);
 
