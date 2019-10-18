@@ -37,7 +37,6 @@ export default class extends Command {
     ) {
         var embed = new MessageEmbed()
         embed.title = "Claim Plot";
-        //embed.fields.push({ name: "Coordinates", value: "X: " + xCoord + ", Z: " + zCoord });
 
         if (options.owner || options.shape || options.size) {
             var secLvl = SecurityService.getUserSecurityLevel(context.message,context.realmSettings);
