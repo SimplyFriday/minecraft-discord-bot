@@ -64,7 +64,7 @@ export abstract class MinecraftBot {
                 } else  if (ValidCommands.includes(baseCmd)) {
                     try {
                         
-                        var cmdDir = Path.join(__dirname, 'commands', baseCmd);
+                        var cmdDir = Path.join(__dirname, 'Commands', baseCmd);
                         let cli = new DiscordCli(baseCmd, cmdDir);
 
                         let shim = new DiscordShim(cli, MinecraftBot._client,message);
