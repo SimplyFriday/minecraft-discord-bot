@@ -72,6 +72,14 @@ export abstract class MinecraftBot {
                         if (result.text) {
                             message.channel.send("```\n" + result.text + "\n```");
                         } else {
+                            if (result instanceof MessageEmbed) {
+                                result.type = "rich";
+                                // Footer is required because embeds on android are dumb (adding a long footer
+                                // coerces a minimum width). 
+                                // https://www.reddit.com/r/discordapp/comments/co8f2x/uh_any_way_to_fix_this_it_happens_using_any_form/
+                                result.footer = {text:"Plot Bot | A helper for Realms with strict ownership"};
+                            }
+
                             message.channel.send(result);
                         }
                     } catch (error) {

@@ -1,5 +1,6 @@
 import { CLI, Command, ExpectedError } from 'clime';
 import { DiscordCommandContext } from './discord-command-context';
+import { SecurityService, SecurityLevel } from './security-service';
 
 // This class really only exists to inject the security stuff
 export class DiscordCli extends CLI {
@@ -17,19 +18,12 @@ export class DiscordCli extends CLI {
             
             if (module && !shouldRun) {
                 var targetCommand = module.default;
-                var secLvl:SecurityLevel = SecurityLevel.Everyone;
+                var secLvl:SecurityLevel = SecurityLevel.Player;
 
                 if (targetCommand && targetCommand.prototype instanceof Command) {
                     if (contextExtension.message.member) {
 
-                        contextExtension.message.member.roles.forEach (role => {
-                            if (role.name.toLowerCase() === contextExtension.realmSettings.serverAdminRoleName.toLowerCase()) {
-                                secLvl = SecurityLevel.Admin
-                            } else if (role.name.toLowerCase() === contextExtension.realmSettings.serverModeratorRoleName.toLowerCase() 
-                                       && secLvl < SecurityLevel.Admin) {
-                                secLvl = SecurityLevel.Moderator;
-                            }                            
-                        });
+                        secLvl = SecurityService.getUserSecurityLevel(contextExtension.message, contextExtension.realmSettings);
 
                         let reqLvl = module.minimumSecurityLevel | 0;
 
@@ -52,8 +46,3 @@ export class DiscordCli extends CLI {
     }
 }
 
-export enum SecurityLevel {
-    Everyone = 0,
-    Moderator = 1,
-    Admin = 2
-}

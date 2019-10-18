@@ -39,7 +39,7 @@ export class DiscordShim {
                 throw new Error("Huh, guild.id was missing. This shouldn't be possible, yet here we are.");
             }
 
-            var context = new DiscordCommandContext(options, {message:this.message, client:this.client, realmSettings: settings} )
+            var context = new DiscordCommandContext(options, {message:this.message, client:this.client, realmSettings: settings} );
 
             return await this.cli.executeWithSecurity(argArr, context);
         } catch (error) {

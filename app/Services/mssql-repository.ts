@@ -1,10 +1,11 @@
 import { RealmSettings } from '../Models/realm-settings';
-import {ConnectionPool, Request, IResult, config, BigInt, ISqlType, NVarChar, VarChar} from "mssql";
+import {ConnectionPool, Request, IResult, config, BigInt, ISqlType, NVarChar, VarChar, Int} from "mssql";
 import { ConfigHelper } from './config-helper';
 import { error } from 'console';
 import { ExpectedError } from 'clime';
+import { PlotViewItem, PlotView } from '../Models/plot-view';
 export class MSSqlRepository
-{   
+{
     private configHelper:ConfigHelper;
 
     constructor ()
@@ -78,7 +79,7 @@ export class MSSqlRepository
         return settings;
     }
 
-    public async setRealmSettings(discordServerId:string, key:string, value:string, realmName?:string, playerId?:string) {
+    public async setRealmSettings(discordServerId:string, key:string, value:string, realmName?:string, PlayerId?:string) {
         var dummySettings:RealmSettings = new RealmSettings
         
         if (!dummySettings.hasOwnProperty(key)) {
@@ -100,8 +101,100 @@ export class MSSqlRepository
                 ["RealmName", NVarChar, realmName],
                 ["Key", VarChar, key],
                 ["Value", NVarChar, value],
-                ["PlayerId", VarChar, playerId]);
+                ["PlayerId", VarChar, PlayerId]);
     } 
+
+    public async getPlotsByOwnerAndRealm (discordServerId:string, realmName:string, ownerId:string):Promise<PlotView> {
+        var plotView = new PlotView();
+
+        var result = 
+            await this.executeStoredProcedure("dbo.GetPlotsByOwnerAndRealm",
+                ["DiscordServerId", VarChar,discordServerId],
+                ["RealmName", NVarChar,realmName],
+                ["OwnerId", NVarChar,ownerId]);
+
+        if (result.recordset) {       
+            result.recordset.forEach(row => {
+                var item = new PlotViewItem(row.CenterX, row.CenterY, row.Notes, row.Length, row.Shape);
+                plotView.items.push (item);
+            });
+        }
+
+        return plotView;
+    }
+
+    public async getPlotsRealmAndCoordinates(discordServerId: string, realmName: string, xCoord:number, yCoord:number, radius:number): Promise<PlotView> {
+        var plotView = new PlotView();
+
+        var result = 
+            await this.executeStoredProcedure("dbo.GetPlotsByRealmAndCoordinates",
+                ["DiscordServerId", VarChar,discordServerId],
+                ["RealmName", NVarChar,realmName],
+                ["XCoordinate", BigInt,xCoord],
+                ["YCoordinate", BigInt,yCoord],
+                ["Radius", Int,radius],);
+
+        if (result.recordset) {       
+            result.recordset.forEach(row => {
+                var item = new PlotViewItem(row.CenterX, row.CenterY, row.Notes, row.Length, row.Shape, row.OwnerId);
+                plotView.items.push (item);
+            });
+        }
+
+        return plotView;
+    }   
+
+    public async checkForPlotIntersect(discordServerId:string, realmName:string, shape:string, centerX:number, centerY:number, size:number):Promise<boolean> {
+        if (shape.toLowerCase() === 'circle') {
+            var result = 
+                await this.executeStoredProcedure ("dbo.CheckForCirclePlotIntersect",
+                    ["DiscordServerId", VarChar, discordServerId],
+                    ["RealmName", NVarChar, realmName],
+                    ["Size", NVarChar, size],
+                    ["CenterX", BigInt, centerX],
+                    ["CenterY", BigInt, centerY]);
+
+            return result.recordset.length != 0;
+        } else if (shape.toLowerCase() === 'square') {
+            var result = 
+            await this.executeStoredProcedure ("dbo.CheckForSquarePlotIntersect",
+                ["DiscordServerId", VarChar, discordServerId],
+                ["RealmName", NVarChar, realmName],
+                ["Size", NVarChar, size],
+                ["CenterX", BigInt, centerX],
+                ["CenterY", BigInt, centerY]);
+                
+            return result.recordset.length != 0;
+        } else {
+            throw new Error ("Shape not yet supported");
+        }
+    }
+
+    public async insertPlot (discordServerId:string, realmName:string, ownerId:string, centerX:number, centerY:number, shape:string, size:number, notes?:string) {
+        if (shape.toLowerCase() === 'circle') {
+            var result = 
+                await this.executeStoredProcedure ("dbo.InsertCirclePlot",
+                    ["DiscordServerId", VarChar, discordServerId],
+                    ["RealmName", NVarChar, realmName],
+                    ["Notes", NVarChar, notes],
+                    ["Radius", NVarChar, size],
+                    ["OwnerId", NVarChar, ownerId],
+                    ["CenterX", BigInt, centerX],
+                    ["CenterY", BigInt, centerY]);
+        } else if (shape.toLowerCase() === 'square') {
+            var result = 
+                await this.executeStoredProcedure ("dbo.InsertSquarePlot",
+                    ["DiscordServerId", VarChar, discordServerId],
+                    ["RealmName", NVarChar, realmName],
+                    ["Notes", NVarChar, notes],
+                    ["SideLength", NVarChar, size],
+                    ["OwnerId", NVarChar, ownerId],
+                    ["CenterX", BigInt, centerX],
+                    ["CenterY", BigInt, centerY]);
+        } else {
+            throw new Error ("Shape not yet supported");
+        }
+    }
 
     private async executeStoredProcedure(sprocName:string, ...args:[string,ISqlType | (() => ISqlType),any][]):Promise<any> {
         var config:config = {

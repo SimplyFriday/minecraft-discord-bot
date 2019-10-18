@@ -3,12 +3,13 @@ CREATE TABLE dbo.Plot
 	Id INT IDENTITY(1,1) 
 		CONSTRAINT pk_Plot PRIMARY KEY CLUSTERED,
 	DiscordServerId VARCHAR(50) NOT NULL,
-	OwnerId VARCHAR(40) NOT NULL,
+	OwnerId NVARCHAR(100) NOT NULL,
 	CenterX BIGINT NOT NULL,
 	CenterY BIGINT NOT NULL,
 	Area GEOMETRY NULL,
 	RealmName NVARCHAR(100) NOT NULL,
-	Notes NVARCHAR(500) NULL
+	Notes NVARCHAR(500) NULL,
+	NumberOfSides AS Area.STNumPoints() PERSISTED NOT NULL
 );
 GO
 
@@ -26,7 +27,7 @@ ON dbo.Plot (
                 DiscordServerId,
                 RealmName
             )
-INCLUDE (Area, OwnerId);
+INCLUDE (Area, OwnerId, NumberOfSides);
 
 CREATE TABLE dbo.AppLog
 (
