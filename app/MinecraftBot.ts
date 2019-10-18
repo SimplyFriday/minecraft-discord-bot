@@ -58,7 +58,7 @@ export abstract class MinecraftBot {
                     });
 
                     helpText = helpText + '\nAll commands accept the "--help" parameter, which will cause the command to print usage info.```\n'
-                                        + 'For more info check out https://github.com/josh-greenlaw/minecraft-discord-bot!';
+                                        + 'For more info check out https://github.com/josh-greenlaw/minecraft-discord-bot';
 
                     message.channel.send(helpText);
                 } else  if (ValidCommands.includes(baseCmd)) {
