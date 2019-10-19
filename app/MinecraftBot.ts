@@ -71,7 +71,9 @@ export abstract class MinecraftBot {
                         let result = await shim.execute(cmd);
 
                         if (result.text) {
-                            message.channel.send("```\n" + result.text + "\n```");
+                            // Remove all control characters
+                            var cleanText = result.text.replace(/[\u001b\u009b][[()#;?]*(?:[0-9]{1,4}(?:;[0-9]{0,4})*)?[0-9A-ORZcf-nqry=><]/g, "");
+                            message.channel.send("```\n" + cleanText + "\n```");
                         } else {
                             if (result instanceof MessageEmbed) {
                                 result.type = "rich";
