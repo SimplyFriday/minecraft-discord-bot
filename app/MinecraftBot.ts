@@ -18,14 +18,16 @@ export abstract class MinecraftBot {
         this._client = new Client();
         var ch = new ConfigHelper();
 
-        this._client.login( ch.DiscordToken );
-        
-        this.populateServices();
-    }
-    
-    static populateServices() {
+        this.startLoginLoop (ch);
     }
 
+    static startLoginLoop(ch:ConfigHelper) {
+        try {
+            this._client.login( ch.DiscordToken );
+        } catch {
+            console.log("Failed to log in");
+        }
+    }
 
     @On("message")
     private async onMessage(message: Message) {
@@ -49,21 +51,20 @@ export abstract class MinecraftBot {
                 }
 
                 console.log("baseCmd='" + baseCmd + "'")
-                    
-                if (baseCmd === 'help') {
-                    var helpText = "```\nValid commands:\n\n";
+                
+                try {
+                    if (baseCmd === 'help') {
+                        var helpText = "```\nValid commands:\n\n";
 
-                    ValidCommands.forEach(command => {
-                        helpText = helpText + ' - ' + command +  '\n';
-                    });
+                        ValidCommands.forEach(command => {
+                            helpText = helpText + ' - ' + command +  '\n';
+                        });
 
-                    helpText = helpText + '\nAll commands accept the "--help" parameter, which will cause the command to print usage info.```\n'
-                                        + 'For more info check out https://github.com/josh-greenlaw/minecraft-discord-bot';
+                        helpText = helpText + '\nAll commands accept the "--help" parameter, which will cause the command to print usage info.```\n'
+                                            + 'For more info check out https://github.com/josh-greenlaw/minecraft-discord-bot';
 
-                    message.channel.send(helpText);
-                } else  if (ValidCommands.includes(baseCmd)) {
-                    try {
-                        
+                        message.channel.send(helpText);
+                    } else  if (ValidCommands.includes(baseCmd)) {                        
                         var cmdDir = Path.join(__dirname, 'Commands', baseCmd);
                         let cli = new DiscordCli(baseCmd, cmdDir);
 
@@ -85,13 +86,14 @@ export abstract class MinecraftBot {
 
                             message.channel.send(result);
                         }
-                    } catch (error) {
-                        console.error(error);
                     }
-                } 
-            }
+                } catch (error) {
+                    console.error(error);
+                }
+            } 
         }
     }
 }
+
     
 MinecraftBot.start();
