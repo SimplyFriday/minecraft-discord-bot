@@ -115,7 +115,7 @@ export class MSSqlRepository
 
         if (result.recordset) {       
             result.recordset.forEach(row => {
-                var item = new PlotViewItem(row.CenterX, row.CenterY, row.Notes, row.Length, row.Shape);
+                var item = new PlotViewItem(row.CenterX, row.CenterY, row.Notes, row.Length, row.Shape, undefined, row.Id);
                 plotView.items.push (item);
             });
         }
@@ -194,6 +194,38 @@ export class MSSqlRepository
         } else {
             throw new Error ("Shape not yet supported");
         }
+    }
+
+    public async deletePlotById(discordServerId:string, realmName:string, id:number) {
+        var plot = await this.getPlotById(id);
+        
+        if (plot){
+            if (plot.realmName != realmName || plot.discordServerId != discordServerId) {
+                throw new ExpectedError("You do not have permission to delete this plot.");
+            }
+
+            var result = 
+                await this.executeStoredProcedure ("dbo.DeletePlotById",
+                    ["PlotId", Int, id]);
+        }
+    }
+    
+    public async getPlotById(id: number):Promise<PlotViewItem> {
+        var result =  await this.executeStoredProcedure ("dbo.GetPlotById",
+                ["PlotId", Int, id]);
+            
+        var item:PlotViewItem | undefined = undefined;
+
+        result.recordset.forEach(row => {
+            item = new PlotViewItem(row.CenterX, row.CenterY, row.Notes, row.Length, row.Shape, undefined, row.Id,row.DiscordServerId, row.RealmName);
+            return;
+        });
+
+        if (item) {
+            return item;
+        }
+
+        throw new ExpectedError('The provided Id was not found.');
     }
 
     private async executeStoredProcedure(sprocName:string, ...args:[string,ISqlType | (() => ISqlType),any][]):Promise<any> {

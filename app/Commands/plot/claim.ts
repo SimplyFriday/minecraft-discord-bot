@@ -5,9 +5,9 @@ import { PlotClaimOptions } from './default';
 import { DiscordCommandContext } from '../../Services/discord-command-context';
 import { MSSqlRepository } from '../../Services/mssql-repository';
 
-export const brief = 'List Plots';
+export const brief = 'Claim Plots';
 export const description =
-    'List all plots for the specified user.';
+    'Claim a plot with the given options.';
 
 export const minimumSecurityLevel = SecurityLevel.Player;
 

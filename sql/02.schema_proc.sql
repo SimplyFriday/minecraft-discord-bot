@@ -428,4 +428,37 @@ BEGIN
 END
 GO
 
+CREATE OR ALTER PROCEDURE dbo.GetPlotById
+(
+	@PlotId INT
+)
+AS
+BEGIN
+	SELECT 
+		Id,
+		CenterX,
+		CenterY,
+		Notes,
+		OwnerId,
+		ROUND(Area.STPointN(1).STDistance(Area.STCentroid()),0) AS Length,
+		CASE  
+			WHEN NumberOfSides = 5 THEN 'Square' 
+			WHEN NumberOfSides > 20 THEN 'Circle' 
+			ELSE 'Freeform' 
+		END AS Shape,
+		RealmName,
+		DiscordServerId
+	FROM dbo.Plot
+	WHERE Id = @PlotId
+END
+GO
 
+CREATE OR ALTER PROCEDURE dbo.DeletetPlotById
+(
+	@PlotId INT
+)
+AS
+BEGIN
+	DELETE FROM dbo.Plot
+	WHERE Id = @PlotId
+END

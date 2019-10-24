@@ -106,6 +106,11 @@ export default class extends Command {
             if (plotView.items.length > 0){
                 plotView.items.forEach(plot => {
                     var val = "Center: " + plot.centerX + "," + plot.centerY + "\nLength: " + plot.length + "\nShape: " + plot.shape;
+                    
+                    if (plot.id) {
+                        val = "Id: " + plot.id + '\n' + val;
+                    }
+                    
                     if (plot.notes) {
                         val = val + "\nNotes: " + plot.notes;
                     }
