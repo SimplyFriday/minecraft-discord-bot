@@ -74,6 +74,13 @@ This will do a few things:
 the defaultPlotSizeMeters and defaultPlotShape settings to determine plot dimensions.
 3. If the plot is clear, then it adds a new plot for the current user.
 
+## Deleting Plots
+
+You can delete a plot using the "plot delete" sub command. Deletes must be done using the plot Id, found using the base "plot" 
+command. Plots may only be deleted from the server to which they belong.
+
+```>%plot delete 65```
+
 ### Overrides
 
 -n: This flag can be used by anyone when claiming a plot. This simply adds a "notes" section to the plot, which is returned when viewing.
