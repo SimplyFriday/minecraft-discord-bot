@@ -453,7 +453,7 @@ BEGIN
 END
 GO
 
-CREATE OR ALTER PROCEDURE dbo.DeletetPlotById
+CREATE OR ALTER PROCEDURE dbo.DeletePlotById
 (
 	@PlotId INT
 )
