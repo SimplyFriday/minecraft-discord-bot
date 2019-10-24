@@ -26,6 +26,7 @@ export abstract class MinecraftBot {
             this._client.login( ch.DiscordToken );
         } catch {
             console.log("Failed to log in");
+            this.startLoginLoop(ch);
         }
     }
 
