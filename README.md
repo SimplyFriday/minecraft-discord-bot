@@ -92,7 +92,7 @@ or add a string identifier like "Server" (this still obeys plot overlap and max 
 ## Group Plots
 Some Realms allow players to form groups, and those plots are tracked separately. To accomplish this, moderators and admins can use the -o
 switch on "plot claim"
-```>%plot claim 100, 100 -o "Super Adventuring Friends"```
+```>%plot claim 100 100 -o "Super Adventuring Friends"```
 
 And it can be looked up by anyone using:
 ```>%plot "Super Adventuring Friends"```
