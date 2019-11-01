@@ -39,7 +39,7 @@ export abstract class MinecraftBot {
                 MinecraftBot._client.user.id !== message.author.id) {
 
             if (message.content.startsWith(__Prefix) && !message.author.bot) {
-                var cmd = message.content.replace(__Prefix, "").trim();
+                var cmd = this.sanitizeInput(message.content);
                 var ioFirstSpace = cmd.indexOf(" ");
                 var baseCmd = "";
 
@@ -93,6 +93,14 @@ export abstract class MinecraftBot {
                 }
             } 
         }
+    }
+    sanitizeInput(content: string):string {
+        return content
+                .replace(__Prefix, "")              // Remove prefix from command
+                .replace(/[\u2018\u2019]/g, "'")    // Curly single quote to regular
+                .replace(/[\u201C\u201D]/g, '"')    // Curly double quote to regular
+                .trim()
+
     }
 }
 
