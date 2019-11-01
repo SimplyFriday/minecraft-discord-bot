@@ -3,7 +3,7 @@ import { MessageEmbed } from 'discord.js';
 import { SecurityLevel } from '../../Services/security-service';
 import { DiscordCommandContext } from '../../Services/discord-command-context';
 import { MSSqlRepository } from '../../Services/mssql-repository';
-import { PlotView } from '../../Models/plot-view';
+import { PlotView, PlotViewItem } from '../../Models/plot-view';
 
 export const brief = 'Plot tools';
 export const description =
@@ -40,10 +40,16 @@ export class PlotClaimOptions extends Options {
 export class PlotViewOptions extends Options{
     @option({
         flag: 'c',
-        description: 'Search via coordinates instead of player. Enter as "Radius, x coord, z coord" (e.g. "500,0,0")',
+        description: 'Search via coordinates instead of player. Enter as "Radius, x coord, z coord" (e.g. "500,0,0")'
     })
     coordinateSearch?: string;
 
+    @option({
+        flag: 'a',
+        description: 'List all plots on the given realm',
+        toggle: true
+    })
+    all?: boolean;
 }
 
 @command()
@@ -92,6 +98,15 @@ export default class extends Command {
                     coords[1],
                     coords[2],
                     coords[0]);
+            } else if (options.all) {
+                var plotView = await repo.GetPlotsByRealm(context.message.guild.id, realm);
+                
+                if (plotView.items.length > 0){
+                    plotView.items.forEach(plot => {
+                        var val = this.getEmbedValue(plot, context);
+                        embed.fields.push({ name: "Plot Details", value: val }); 
+                    });
+                }
             } else {
                 if (!owner) {
                     owner = context.message.member.id
@@ -105,35 +120,7 @@ export default class extends Command {
 
             if (plotView.items.length > 0){
                 plotView.items.forEach(plot => {
-                    var val = "Center: " + plot.centerX + "," + plot.centerY + "\nLength: " + plot.length + "\nShape: " + plot.shape;
-                    
-                    if (plot.id) {
-                        val = "Id: " + plot.id + '\n' + val;
-                    }
-                    
-                    if (plot.notes) {
-                        val = val + "\nNotes: " + plot.notes;
-                    }
-
-                    if (plot.ownerId) {
-                        var oIdNum = Number(plot.ownerId);
-                        
-                        if (oIdNum && context.message.guild) {
-                            var users = context.message.guild.members.filter (mem =>{
-                                return +mem.id == oIdNum;
-                            });
-
-                            if (users.size > 0){
-                                var user = users.get(plot.ownerId);
-                                if (user) {
-                                    val = val + "\nOwner: " + user.displayName;
-                                }
-                            }
-                        } else {
-                            val = val + "\nOwner: " + plot.ownerId;
-                        }
-                    }
-
+                    var val = this.getEmbedValue(plot, context);
                     embed.fields.push({ name: "Plot Details", value: val }); 
                 });
             } else {
@@ -143,5 +130,38 @@ export default class extends Command {
             embed.fields.push({ name: "Error", value: "Somehow this message wasn't sent from a server or a person..." });
         }
         return embed;
+    }
+
+    private getEmbedValue (plot:PlotViewItem, context:DiscordCommandContext):string {
+        var val = "Center: " + plot.centerX + "," + plot.centerY + "\nLength: " + plot.length + "\nShape: " + plot.shape;
+        
+        if (plot.id) {
+            val = "Id: " + plot.id + '\n' + val;
+        }
+        
+        if (plot.notes) {
+            val = val + "\nNotes: " + plot.notes;
+        }
+
+        if (plot.ownerId) {
+            var oIdNum = Number(plot.ownerId);
+            
+            if (oIdNum && context.message.guild) {
+                var users = context.message.guild.members.filter (mem =>{
+                    return +mem.id == oIdNum;
+                });
+
+                if (users.size > 0){
+                    var user = users.get(plot.ownerId);
+                    if (user) {
+                        val = val + "\nOwner: " + user.displayName;
+                    }
+                }
+            } else {
+                val = val + "\nOwner: " + plot.ownerId;
+            }
+        }
+
+        return val;
     }
 }

@@ -228,6 +228,21 @@ export class MSSqlRepository
         throw new ExpectedError('The provided Id was not found.');
     }
 
+    public async GetPlotsByRealm (discordServerId:string, realmName:string):Promise<PlotView> {
+        var result =  await this.executeStoredProcedure ("dbo.GetPlotsByRealm",
+                ["DiscordServerId", VarChar, discordServerId],
+                ["RealmName", NVarChar, realmName]);
+        
+        var plotView = new PlotView();
+
+        result.recordset.forEach(row => {
+            var item = new PlotViewItem(row.CenterX, row.CenterY, row.Notes, row.Length, row.Shape, row.OwnerId, row.Id,row.DiscordServerId, row.RealmName);
+            plotView.items.push(item);
+        });
+
+        return plotView;
+    }
+
     private async executeStoredProcedure(sprocName:string, ...args:[string,ISqlType | (() => ISqlType),any][]):Promise<any> {
         var config:config = {
             server: this.configHelper.DatabaseSettings.Server,
