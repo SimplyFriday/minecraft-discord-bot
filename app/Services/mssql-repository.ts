@@ -104,7 +104,9 @@ export class MSSqlRepository
                 ["PlayerId", VarChar, PlayerId]);
     } 
 
-    public async getPlotsByOwnerAndRealm (discordServerId:string, realmName:string, ownerId:string):Promise<PlotView> {
+    public async getPlotsByOwnerAndRealm ( discordServerId:string, 
+                                           realmName:string, 
+                                           ownerId:string ):Promise<PlotView> {
         var plotView = new PlotView();
 
         var result = 
@@ -115,7 +117,15 @@ export class MSSqlRepository
 
         if (result.recordset) {       
             result.recordset.forEach(row => {
-                var item = new PlotViewItem(row.CenterX, row.CenterY, row.Notes, row.Length, row.Shape, undefined, row.Id);
+                var item = new PlotViewItem(row.CenterX, 
+                                            row.CenterY, 
+                                            row.Notes, 
+                                            row.Length, 
+                                            row.Shape, 
+                                            row.Dimension, 
+                                            undefined, 
+                                            row.Id);
+
                 plotView.items.push (item);
             });
         }
@@ -123,7 +133,12 @@ export class MSSqlRepository
         return plotView;
     }
 
-    public async getPlotsRealmAndCoordinates(discordServerId: string, realmName: string, xCoord:number, yCoord:number, radius:number): Promise<PlotView> {
+    public async getPlotsRealmAndCoordinates( discordServerId: string, 
+                                              realmName: string, 
+                                              xCoord:number, 
+                                              yCoord:number, 
+                                              radius:number,
+                                              dimension:string ): Promise<PlotView> {
         var plotView = new PlotView();
 
         var result = 
@@ -132,11 +147,18 @@ export class MSSqlRepository
                 ["RealmName", NVarChar,realmName],
                 ["XCoordinate", BigInt,xCoord],
                 ["YCoordinate", BigInt,yCoord],
-                ["Radius", Int,radius],);
+                ["Radius", Int,radius],
+                ["Dimension", VarChar, dimension]);
 
         if (result.recordset) {       
             result.recordset.forEach(row => {
-                var item = new PlotViewItem(row.CenterX, row.CenterY, row.Notes, row.Length, row.Shape, row.OwnerId);
+                var item = new PlotViewItem( row.CenterX, 
+                                             row.CenterY, 
+                                             row.Notes, 
+                                             row.Length, 
+                                             row.Shape,
+                                             row.Dimension, 
+                                             row.OwnerId);
                 plotView.items.push (item);
             });
         }
@@ -144,7 +166,14 @@ export class MSSqlRepository
         return plotView;
     }   
 
-    public async checkForPlotIntersect(discordServerId:string, realmName:string, shape:string, centerX:number, centerY:number, size:number):Promise<boolean> {
+    public async checkForPlotIntersect( discordServerId:string, 
+                                        realmName:string, 
+                                        shape:string, 
+                                        centerX:number, 
+                                        centerY:number, 
+                                        size:number,
+                                        dimension:string ):Promise<boolean> 
+    {
         if (shape.toLowerCase() === 'circle') {
             var result = 
                 await this.executeStoredProcedure ("dbo.CheckForCirclePlotIntersect",
@@ -152,7 +181,8 @@ export class MSSqlRepository
                     ["RealmName", NVarChar, realmName],
                     ["Size", NVarChar, size],
                     ["CenterX", BigInt, centerX],
-                    ["CenterY", BigInt, centerY]);
+                    ["CenterY", BigInt, centerY],
+                    ["Dimension", VarChar, dimension]);
 
             return result.recordset.length != 0;
         } else if (shape.toLowerCase() === 'square') {
@@ -162,7 +192,8 @@ export class MSSqlRepository
                 ["RealmName", NVarChar, realmName],
                 ["Size", NVarChar, size],
                 ["CenterX", BigInt, centerX],
-                ["CenterY", BigInt, centerY]);
+                ["CenterY", BigInt, centerY],
+                ["Dimension", VarChar, dimension]);
                 
             return result.recordset.length != 0;
         } else {
@@ -170,7 +201,16 @@ export class MSSqlRepository
         }
     }
 
-    public async insertPlot (discordServerId:string, realmName:string, ownerId:string, centerX:number, centerY:number, shape:string, size:number, notes?:string) {
+    public async insertPlot ( discordServerId:string, 
+                              realmName:string, 
+                              ownerId:string, 
+                              centerX:number, 
+                              centerY:number, 
+                              shape:string, 
+                              size:number, 
+                              dimension:string,
+                              notes?:string) 
+    {
         if (shape.toLowerCase() === 'circle') {
             var result = 
                 await this.executeStoredProcedure ("dbo.InsertCirclePlot",
@@ -179,6 +219,7 @@ export class MSSqlRepository
                     ["Notes", NVarChar, notes],
                     ["Radius", NVarChar, size],
                     ["OwnerId", NVarChar, ownerId],
+                    ["Dimension", VarChar, dimension],
                     ["CenterX", BigInt, centerX],
                     ["CenterY", BigInt, centerY]);
         } else if (shape.toLowerCase() === 'square') {
@@ -189,6 +230,7 @@ export class MSSqlRepository
                     ["Notes", NVarChar, notes],
                     ["SideLength", NVarChar, size],
                     ["OwnerId", NVarChar, ownerId],
+                    ["Dimension", VarChar, dimension],
                     ["CenterX", BigInt, centerX],
                     ["CenterY", BigInt, centerY]);
         } else {
@@ -217,7 +259,15 @@ export class MSSqlRepository
         var item:PlotViewItem | undefined = undefined;
 
         result.recordset.forEach(row => {
-            item = new PlotViewItem(row.CenterX, row.CenterY, row.Notes, row.Length, row.Shape, undefined, row.Id,row.DiscordServerId, row.RealmName);
+            item = new PlotViewItem(row.CenterX, 
+                                    row.CenterY, 
+                                    row.Notes, 
+                                    row.Length, 
+                                    row.Shape, 
+                                    row.Dimension, 
+                                    row.Id,
+                                    row.DiscordServerId, 
+                                    row.RealmName);
             return;
         });
 
@@ -236,7 +286,17 @@ export class MSSqlRepository
         var plotView = new PlotView();
 
         result.recordset.forEach(row => {
-            var item = new PlotViewItem(row.CenterX, row.CenterY, row.Notes, row.Length, row.Shape, row.OwnerId, row.Id,row.DiscordServerId, row.RealmName);
+            var item = new PlotViewItem( row.CenterX, 
+                                         row.CenterY, 
+                                         row.Notes, 
+                                         row.Length, 
+                                         row.Shape, 
+                                         row.Dimension,
+                                         row.OwnerId, 
+                                         row.Id,
+                                         row.DiscordServerId, 
+                                         row.RealmName);
+            
             plotView.items.push(item);
         });
 

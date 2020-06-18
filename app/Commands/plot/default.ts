@@ -97,16 +97,11 @@ export default class extends Command {
                     realm,
                     coords[1],
                     coords[2],
-                    coords[0]);
+                    coords[0],
+                    "Overworld");
+
             } else if (options.all) {
                 var plotView = await repo.GetPlotsByRealm(context.message.guild.id, realm);
-                
-                if (plotView.items.length > 0){
-                    plotView.items.forEach(plot => {
-                        var val = this.getEmbedValue(plot, context);
-                        embed.fields.push({ name: "Plot Details", value: val }); 
-                    });
-                }
             } else {
                 if (!owner) {
                     owner = context.message.member.id
@@ -160,6 +155,10 @@ export default class extends Command {
             } else {
                 val = val + "\nOwner: " + plot.ownerId;
             }
+        }
+        
+        if (plot.dimension) {
+            val = val + "\nDimension: " + plot.dimension;
         }
 
         return val;

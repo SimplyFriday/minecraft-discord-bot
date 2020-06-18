@@ -28,6 +28,12 @@ export default class extends Command {
         zCoord: number,
         @param({
             type: String,
+            description: 'The dimension to claim in, (e=End, n=Nether, o=Overworld)',
+            required: false
+        })
+        dimension: string,
+        @param({
+            type: String,
             description: 'Optional, Realm name',
             required: false
         })
@@ -66,6 +72,26 @@ export default class extends Command {
             realmName = context.realmSettings.defaultRealmName;
         }
 
+        switch (dimension) {
+            case 'e':
+            case 'E':
+            case 'end':
+                dimension = 'End';
+                break;
+            case 'o':
+            case 'O':
+            case 'overworld':
+                dimension = 'Overworld';
+                break;
+            case 'n':
+            case 'N':
+            case 'nether':
+                dimension = 'Nether';
+                break;
+            default:
+                dimension = 'Overworld';            
+        }
+
         if (context.message.guild) {
             var repo = new MSSqlRepository();
 
@@ -82,7 +108,8 @@ export default class extends Command {
                                                             options.shape,
                                                             xCoord,
                                                             zCoord,
-                                                            options.size);
+                                                            options.size,
+                                                            dimension);
             
             var canClaim = true;
 
@@ -104,6 +131,7 @@ export default class extends Command {
                                 zCoord,
                                 options.shape,
                                 options.size,
+                                dimension,
                                 options.notes)
 
                 embed.fields.push ({name:"Attempt", value:"Success"});

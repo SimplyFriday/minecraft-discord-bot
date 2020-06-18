@@ -12,8 +12,9 @@ export class PlotViewItem {
     id?:number;
     realmName?:string;
     discordServerId?:string;
+    dimension:string;
 
-    constructor (centerX:number, centerY:number, notes:string, length:number, shape:string, ownerId?:string,id?:number,
+    constructor (centerX:number, centerY:number, notes:string, length:number, shape:string, dimension:string, ownerId?:string,id?:number,
         discordServerId?:string, realmName?:string){
         this.centerX = centerX;
         this.centerY = centerY;
@@ -24,5 +25,6 @@ export class PlotViewItem {
         this.id = id;
         this.discordServerId = discordServerId;
         this.realmName = realmName;
+        this.dimension = dimension;
     }
 }
