@@ -87,7 +87,7 @@ export default class extends Command {
         
             if (plotView.items.length > 0){
                 plotView.items.forEach(plot => {
-                    var val = this.getEmbedValue(plot, context);
+                    var val = plot.getEmbedValue(context);
                     embed.fields.push({ name: "Plot Details", value: val }); 
                 });
             } else {
@@ -97,42 +97,5 @@ export default class extends Command {
             embed.fields.push({ name: "Error", value: "Somehow this message wasn't sent from a server or a person..." });
         }
         return embed;
-    }
-
-    private getEmbedValue (plot:PlotViewItem, context:DiscordCommandContext):string {
-        var val = "Center: " + plot.centerX + "," + plot.centerY + "\nLength: " + plot.length + "\nShape: " + plot.shape;
-        
-        if (plot.id) {
-            val = "Id: " + plot.id + '\n' + val;
-        }
-        
-        if (plot.notes) {
-            val = val + "\nNotes: " + plot.notes;
-        }
-
-        if (plot.ownerId) {
-            var oIdNum = Number(plot.ownerId);
-            
-            if (oIdNum && context.message.guild) {
-                var users = context.message.guild.members.filter (mem =>{
-                    return +mem.id == oIdNum;
-                });
-
-                if (users.size > 0){
-                    var user = users.get(plot.ownerId);
-                    if (user) {
-                        val = val + "\nOwner: " + user.displayName;
-                    }
-                }
-            } else {
-                val = val + "\nOwner: " + plot.ownerId;
-            }
-        }
-
-        if (plot.dimension) {
-            val = val + "\nDimension: " + plot.dimension;
-        }
-
-        return val;
     }
 }

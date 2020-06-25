@@ -174,7 +174,7 @@ BEGIN
 		CenterY,
 		ROUND(geometry::STPointFromText('POINT(' + CONVERT(VARCHAR(20),CenterX) + ' ' + CONVERT(VARCHAR(20),Area.STPointN(1).STY ) + ')', 0).STDistance(Area.STCentroid()),0) AS Length,
 		Notes,
-		'Sqaure' AS Shape,
+		'Square' AS Shape,
 		Dimension
 	FROM dbo.Plot
 	WHERE NumberOfSides = 5
