@@ -264,8 +264,9 @@ export class MSSqlRepository
                                     row.CenterY, 
                                     row.Notes, 
                                     row.Length, 
-                                    row.Shape, 
-                                    row.Dimension, 
+                                    row.Shape,
+                                    row.Dimension,
+                                    row.OwnerId,
                                     row.Id,
                                     row.DiscordServerId, 
                                     row.RealmName);
