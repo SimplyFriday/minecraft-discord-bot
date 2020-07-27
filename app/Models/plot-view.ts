@@ -44,17 +44,17 @@ export class PlotViewItem {
         var val = ""
 
         if (this.id) {
-            val = val + "Id: " + this.id;
+            val += "Id: " + this.id + "\n";
         }
 
-        val = "Center: " + this.centerX + "," + this.centerY + "\nLength: " + this.length + "\nShape: " + this.shape;
+        val += "Center: " + this.centerX + "," + this.centerY + "\nLength: " + this.length + "\nShape: " + this.shape;
         
         if (this.coordinateDisplay) {
-            val = val + "\nCoord Range: " + this.coordinateDisplay
+            val += "\nCoord Range: " + this.coordinateDisplay
         }
 
         if (this.notes) {
-            val = val + "\nNotes: " + this.notes;
+            val += "\nNotes: " + this.notes;
         }
 
         if (this.ownerId) {
@@ -68,16 +68,16 @@ export class PlotViewItem {
                 if (users.size > 0){
                     var user = users.get(this.ownerId);
                     if (user) {
-                        val = val + "\nOwner: " + user.displayName;
+                        val += "\nOwner: " + user.displayName;
                     }
                 }
             } else {
-                val = val + "\nOwner: " + this.ownerId;
+                val += "\nOwner: " + this.ownerId;
             }
         }
         
         if (this.dimension) {
-            val = val + "\nDimension: " + this.dimension;
+            val += "\nDimension: " + this.dimension;
         }       
 
         return val;
