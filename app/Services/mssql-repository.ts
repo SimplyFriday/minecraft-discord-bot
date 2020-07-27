@@ -158,7 +158,8 @@ export class MSSqlRepository
                                              row.Length, 
                                              row.Shape,
                                              row.Dimension, 
-                                             row.OwnerId);
+                                             row.OwnerId,
+                                             row.Id);
                 plotView.items.push (item);
             });
         }
