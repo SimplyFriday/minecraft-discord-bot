@@ -2,7 +2,7 @@
 A discord bot that helps admins and players track plot ownership in Minecraft.
 
 # Install
-To install the bot, [click here](https://discordapp.com/api/oauth2/authorize?client_id=631582135165124620&permissions=18432&scope=bot). Please note that the bot is still very much in a beta state! If you encounter any issues, please log them and I'll work on them as soon as I can. Please feel free to add feature requests as well!
+To install the bot, [click here](https://discordapp.com/api/oauth2/authorize?client_id=631582135165124620&permissions=18432&scope=bot). Please note that the bot is still under active development, so if you encounter any issues please log them and I'll work on them as soon as I can. Please feel free to add feature requests as well!
 
 ## Configuration
 To work correctly, server admins should configure this bot before letting players use it.
