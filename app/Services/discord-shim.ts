@@ -1,6 +1,5 @@
 import {CLI, ContextOptions, ExpectedError} from 'clime';
-import { Client } from '@typeit/discord';
-import { Message, MessageEmbed } from 'discord.js';
+import { Client, Message, MessageEmbed } from 'discord.js';
 import { DiscordCommandContext } from './discord-command-context';
 import { MSSqlRepository } from './mssql-repository';
 import { RealmSettings } from '../Models/realm-settings';

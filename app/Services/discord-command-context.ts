@@ -1,6 +1,5 @@
 import { Context, ContextOptions } from 'clime';
-import { Message } from 'discord.js';
-import { Client } from '@typeit/discord';
+import { Client, Message } from 'discord.js';
 import { RealmSettings } from '../Models/realm-settings';
 import { MSSqlRepository } from './mssql-repository';
 

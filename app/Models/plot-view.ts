@@ -61,7 +61,7 @@ export class PlotViewItem {
             var oIdNum = Number(this.ownerId);
             
             if (oIdNum && context.message.guild) {
-                var users = context.message.guild.members.filter (mem =>{
+                var users = context.message.guild.members.cache.filter (mem =>{
                     return +mem.id == oIdNum;
                 });
 

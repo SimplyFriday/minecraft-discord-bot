@@ -115,12 +115,12 @@ export default class extends Command {
 
             if (plots.items.length >= settings.maximumPlayerPlots) {
                 canClaim = false;
-                embed.fields.push ({name:"Attempt", value:"Maximum number of plots exceeded!"});
+                embed.fields.push ({name:"Attempt", value:"Maximum number of plots exceeded!",inline:false});
             }
 
             if (overlap) {
                 canClaim = false;
-                embed.fields.push ({name:"Attempt", value:"This plot would overlap with another!"});
+                embed.fields.push ({name:"Attempt", value:"This plot would overlap with another!",inline:false});
             }
 
             if (canClaim) {
@@ -134,7 +134,7 @@ export default class extends Command {
                                 dimension,
                                 options.notes)
 
-                embed.fields.push ({name:"Attempt", value:"Success"});
+                embed.fields.push ({name:"Attempt", value:"Success",inline:false});
             }
         }
 

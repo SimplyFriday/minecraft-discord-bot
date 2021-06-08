@@ -88,13 +88,13 @@ export default class extends Command {
             if (plotView.items.length > 0){
                 plotView.items.forEach(plot => {
                     var val = plot.getEmbedValue(context);
-                    embed.fields.push({ name: "Plot Details", value: val }); 
+                    embed.fields.push({ name: "Plot Details", value: val,inline:false }); 
                 });
             } else {
-                embed.fields.push({ name: "Plot Details", value: "No claimed plots" }); 
+                embed.fields.push({ name: "Plot Details", value: "No claimed plots",inline:false }); 
             }
         } else {
-            embed.fields.push({ name: "Error", value: "Somehow this message wasn't sent from a server or a person..." });
+            embed.fields.push({ name: "Error", value: "Somehow this message wasn't sent from a server or a person...",inline:false });
         }
         return embed;
     }

@@ -39,7 +39,7 @@ export default class extends Command {
             }
 
             await repo.deletePlotById(context.message.guild.id, realmName, id);
-            embed.fields.push({name:"Result",value:"Success!"});
+            embed.fields.push({name:"Result",value:"Success!",inline:false});
         } else {
             throw new Error ("This wasn't sent from a server... ghosts maybe?");
         }

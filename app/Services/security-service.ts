@@ -7,7 +7,7 @@ export abstract class SecurityService {
         var secLvl = -1;
         
         if (message.member) {
-            message.member.roles.forEach(role => {
+            message.member.roles.cache.forEach(role => {
                 if (role.name.toLowerCase() === realmSettings.serverAdminRoleName.toLowerCase()) {
                     secLvl = SecurityLevel.Admin
                 } else if (role.name.toLowerCase() === realmSettings.serverModeratorRoleName.toLowerCase()

@@ -54,10 +54,10 @@ export default class extends Command {
             }
 
             if (key) {
-                embed.fields.push({ name: key, value: settings[key] });
+                embed.fields.push({ name: key, value: settings[key],inline:false });
             } else {
                 Object.keys(settings).forEach(property => {
-                    embed.fields.push({ name: property, value: settings[property] });
+                    embed.fields.push({ name: property, value: settings[property],inline:false });
                 });
             }
         }
